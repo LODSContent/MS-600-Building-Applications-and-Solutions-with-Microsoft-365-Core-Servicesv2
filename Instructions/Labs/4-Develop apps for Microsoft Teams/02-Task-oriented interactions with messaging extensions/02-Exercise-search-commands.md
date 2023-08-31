@@ -5,22 +5,21 @@ In this exercise, you’ll learn how to execute a messaging extension search com
 > [!IMPORTANT]
 > This exercise assumes you have created the Microsoft Teams app project with the Yeoman generator.
 
-## Task 1: Add a new search messaging extension to the Teams app
+## Add a new search messaging extension to the Teams app
 
 In a previous exercise, you created an action messaging extension that enabled a user to add the details of a planet to a message.
 
 In this section, you'll add a search messaging extension to find a specific planet.
 
-
 ### Update the app's configuration
 
-1. You must increment the version of the app to upgrade an existing installed version. Use the following command to increment the version:
+You must increment the version of the app to upgrade an existing installed version. Use the following command to increment the version:
 
 ```console
 npm version patch
 ```
 
-2. Locate and open the **./src/manifest/manifest.json** file. Find the `composeExtensions.commands` array. Add a new item with the following properties:
+Locate and open the **./src/manifest/manifest.json** file. Find the `composeExtensions.commands` array. Add a new item with the following properties:
 
 ```json
 {
@@ -41,9 +40,9 @@ npm version patch
 
 The next step is to implement the query command messaging extension using a well-known method in the bot.
 
-3. Locate and open the bot in the file **./src/server/planetBot/planetBot.ts**.
+Locate and open the bot in the file **./src/server/planetBot/planetBot.ts**.
 
-4. Update the `import` statement for the **botbuilder** package to include the `MessagingExtensionQuery` and `MessageExtensionResponse` objects:
+Update the `import` statement for the **botbuilder** package to include the `MessagingExtensionQuery` and `MessageExtensionResponse` objects:
 
 ```typescript
 import {
@@ -53,7 +52,7 @@ import {
 } from "botbuilder";
 ```
 
-5. Next, add the following method to the `PlanetBot` class:
+Next, add the following method to the `PlanetBot` class:
 
 ```typescript
 protected handleTeamsMessagingExtensionQuery(context: TurnContext, query: MessagingExtensionQuery): Promise<MessagingExtensionResponse> {
@@ -100,15 +99,15 @@ protected handleTeamsMessagingExtensionQuery(context: TurnContext, query: Messag
 }
 ```
 
-6. This method will first get the search keyword from the query sent to the bot from Microsoft Teams. It then will retrieve planets based on three different queries:
+This method will first get the search keyword from the query sent to the bot from Microsoft Teams. It then will retrieve planets based on three different queries:
 
 - **inner**: this will return all the planets inside the asteroid belt (*Mercury to Mars*)
 - **outer**: this will return all planets outside the asteroid belt (*Jupiter to Neptune*)
-- *keyword*: this will retrieve the specific planet entered
+- **keyword**: this will retrieve the specific planet entered
 
-7. It will then take the query results, convert them to cards and add them to the `MessagingExtensionResult` returned to the Bot Framework and ultimately to Microsoft Teams.
+It will then take the query results, convert them to cards and add them to the `MessagingExtensionResult` returned to the Bot Framework and ultimately to Microsoft Teams.
 
-8. Lastly, add the following utility method to the `PlanetBot` class to create the card for each search result:
+Lastly, add the following utility method to the `PlanetBot` class to create the card for each search result:
 
 ```typescript
 private getPlanetResultCard(selectedPlanet: any): MessagingExtensionAttachment {
@@ -118,7 +117,7 @@ private getPlanetResultCard(selectedPlanet: any): MessagingExtensionAttachment {
 
 ### Test the updated messaging extension
 
-9. From the command line, navigate to the root folder for the project and execute the following command:
+From the command line, navigate to the root folder for the project and execute the following command:
 
 ```console
 gulp ngrok-serve --debug
@@ -127,11 +126,11 @@ gulp ngrok-serve --debug
 > [!IMPORTANT]
 > Recall from a previous exercise, Ngrok will create a new subdomain. You need to update your bot registration's **Messaging endpoint** in the Azure portal (*shown in a previous exercise*) with this new domain before testing it.
 
-10. First, update the existing installed version of the bot. Upload the zip file from the **package** directory.
+First, update the existing installed version of the bot. Upload the zip file from the **package** directory.
 
-11. After updating the app, go back to the 1:1 chat where you tested the messaging extension in the previous exercise. Select the **Planet Messaging** icon below the compose message box in the chat. This will now present the search experience.
+After updating the app, go back to the 1:1 chat where you tested the messaging extension in the previous exercise. Select the **Planet Messaging** icon below the compose message box in the chat. This will now present the search experience.
 
-12. Enter the string **outer** in the search box and wait a few seconds. Microsoft Teams will execute the search and return the results:
+Enter the string **outer** in the search box and wait a few seconds. Microsoft Teams will execute the search and return the results:
 
 ![Screenshot of a search messaging extension.](../../Linked_Image_Files/4-Teams/messaging-extensions/05-test-02.png)
 

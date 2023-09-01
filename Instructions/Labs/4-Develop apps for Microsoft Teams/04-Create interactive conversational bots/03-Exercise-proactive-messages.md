@@ -5,11 +5,11 @@ In this exercise, you’ll update the existing Teams app to send a proactive mes
 > [!IMPORTANT]
 > This exercise assumes you have created the Microsoft Teams app project with the Yeoman generator
 
-## Task 1: Start a proactive message from the bot
+## Start a proactive message from the bot
 
-1. Locate and open the card in the file **./src/server/conversationalBot/cards/responseCard.json**.
+Locate and open the card in the file **./src/server/conversationalBot/cards/responseCard.json**.
 
-2. Add the following action to the card:
+Locate the section at the end of the card for the `ActionSet`. Add the following action to the existing `actions` array:
 
 ```json
 {
@@ -19,7 +19,7 @@ In this exercise, you’ll update the existing Teams app to send a proactive mes
 }
 ```
 
-3. The card should now look like the following:
+The card should now look like the following:
 
 ```json
 {
@@ -76,9 +76,9 @@ In this exercise, you’ll update the existing Teams app to send a proactive mes
 }
 ```
 
-4. Locate and open the bot in the file **./src/server/conversationalBot/ConversationalBot.ts**.
+Locate and open the bot in the file **./src/server/conversationalBot/ConversationalBot.ts**.
 
-5. Add the following objects to the existing `import {...} from "botbuilder";` statement you'll need:
+Add the following objects to the existing `import {...} from "botbuilder";` statement you'll need:
 
 ```typescript
 import {
@@ -91,8 +91,7 @@ import {
 } from "botbuilder";
 ```
 
-
-6. Next, add another `case` statement to the `switch (verb)` statement in the `onAdaptiveCardInvoke()` handler to detect this new action:
+Next, add another `case` statement to the `switch (verb)` statement in the `onAdaptiveCardInvoke()` handler to detect this new action:
 
 ```typescript
 case "newconversation":
@@ -107,11 +106,11 @@ case "newconversation":
 }
 ```
 
-7. The last step is to add the `teamsCreateConversation()` method that will create the new conversation. Add the following method to the `ConversationalBot` class:
+The last step is to add the `teamsCreateConversation()` method that will create the new conversation. Add the following method to the `ConversationalBot` class:
 
 ```typescript
 private async teamsCreateConversation(context: TurnContext, message: Partial<Activity>): Promise<void> {
-  // get a reference to the bot adapter & create a connection to the Teams API
+  // get a reference to the bot adapter and create a connection to the Teams API
   const adapter = <BotFrameworkAdapter>context.adapter;
   const connectorClient = adapter.createConnectorClient(context.activity.serviceUrl);
 
@@ -135,7 +134,7 @@ private async teamsCreateConversation(context: TurnContext, message: Partial<Act
 
 ### Test the bot sending new messages
 
-8. From the command line, navigate to the root folder for the project and execute the following command:
+From the command line, navigate to the root folder for the project and execute the following command:
 
 ```console
 gulp ngrok-serve --debug
@@ -144,13 +143,13 @@ gulp ngrok-serve --debug
 > [!IMPORTANT]
 > Recall from a previous exercise, Ngrok will create a new subdomain. You need to update your bot registration's **Messaging endpoint** in the Azure portal (*shown in a previous exercise*) with this new domain before testing it.
 
-9. In the Microsoft Teams client, go to the channel you installed the bot in the previous section. From the **Conversations** tab, @mention the bot with a random string to trigger the `else` condition.
+In the Microsoft Teams client, go to the channel you installed the bot in the previous section. From the **Conversations** tab, @mention the bot with a random string to trigger the `else` condition.
 
-10. The bot will reply to the message with the updated card that contains two buttons:
+The bot will reply to the message with the updated card that contains two buttons:
 
 ![Screenshot of a message from the bot using cards - initial card display.](../../Linked_Image_Files/4-Teams/conversation-bots/07-test-01.png)
 
-11. Select the second button, **Create new thread in this channel**. Within a few seconds, you should see a new conversation appear in the channel:
+Select the second button, **Create new thread in this channel**. Within a few seconds, you should see a new conversation appear in the channel:
 
 ![Screenshot of a message from the bot using cards - updating a card.](../../Linked_Image_Files/4-Teams/conversation-bots/07-test-02.png)
 

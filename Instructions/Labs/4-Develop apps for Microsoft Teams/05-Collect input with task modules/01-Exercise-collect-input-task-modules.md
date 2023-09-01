@@ -14,7 +14,7 @@ The other task module is implemented using React, the same way custom tabs are i
 
 Developing Microsoft Teams apps requires a Microsoft 365 tenant, Microsoft Teams configured for development, and the necessary tools installed on your workstation.
 
-For the Microsoft 365 tenant, follow the instructions on [Microsoft Teams: Prepare your Microsoft 365 tenant](https://learn.microsoft.com/en-us/microsoftteams/platform/concepts/build-and-test/prepare-your-o365-tenant) for obtaining a developer tenant if you don't currently have a Microsoft 365 account. Make sure you've also enabled Microsoft Teams for your organization.
+For the Microsoft 365 tenant, follow the instructions on [Microsoft Teams: Prepare your Microsoft 365 tenant](https://learn.microsoft.com/en-us/microsoftteams/platform/concepts/build-and-test/prepare-your-o365-tenant) for obtaining a developer tenant if you don't currently have a Microsoft 365 account. Make sure you have also enabled Microsoft Teams for your organization..
 
 Microsoft Teams must be configured to enable custom apps and allow custom apps to be uploaded to your tenant to build custom apps for Microsoft Teams. Follow the instructions on the same **Prepare your Microsoft 365 tenant** page mentioned above.
 
@@ -27,30 +27,28 @@ You'll use Node.js to create custom Microsoft Teams tabs in this module. The exe
 - npm (*installed with Node.js*)
 - [Gulp-cli](https://www.npmjs.com/package/gulp-cli) - v2.3.\*
 - [Yeoman](https://yeoman.io/) - v4.3.\*
-- [Yeoman Generator for Microsoft Teams](https://github.com/pnp/generator-teams) - v4.0.1
+- [Yeoman Generator for Microsoft Teams](https://github.com/pnp/generator-teams) - v4.1.\*
 - [Visual Studio Code](https://code.visualstudio.com)
 
 You must have the minimum versions of these prerequisites installed on your workstation.
 
-## Task 1: Create Microsoft Teams app
+## Create Microsoft Teams app
 
-1. Open your command prompt, navigate to a directory where you want to save your work, create a new folder **learn-msteams-taskmodules**, and change directory into that folder.
+Open your command prompt, navigate to a directory where you want to save your work, create a new folder **learn-msteams-taskmodules**, and change directory into that folder.
 
-2. Run the Yeoman Generator for Microsoft Teams by running the following command:
+Run the Yeoman Generator for Microsoft Teams by running the following command:
 
 ```console
 yo teams
 ```
 
-![Screenshot of the Yeoman Generator for Microsoft Teams.](../../Linked_Image_Files/4-Teams/task-modules/03-yo-teams-01.png)
-
-3. Yeoman will launch and ask you a series of questions. Answer the questions with the following values:
+Yeoman will launch and ask you a series of questions. Answer the questions with the following values:
 
 - **What is your solution name?**: YouTubePlayer
 - **Where do you want to place the files?**: Use the current folder
 - **Title of your Microsoft Teams App project?**: YouTube Player
 - **Your (company) name? (max 32 characters)**: Contoso
-- **Which manifest version would you like to use?**: v1.13
+- **Which manifest version would you like to use?**: v1.13 (With support for extending Teams apps to other parts of the Microsoft 365 ecosystem)
 - **Quick scaffolding**: Yes
 - **What features do you want to add to your project?**: A Tab
 - **The URL where you will host this solution?**: (Accept the default option)
@@ -62,27 +60,19 @@ yo teams
 > [!NOTE]
 > Most of the answers to these questions can be changed after creating the project. For example, the URL where the project will be hosted isn't important at the time of creating or testing the project.
 
-4. After answering the generator's questions, the generator will create the scaffolding for the project and then execute `npm install` that downloads all the dependencies required by the project.
-
-### Ensure the project is using the latest version of Teams SDK
-
-5. Run the npm command to install the latest version of the SDK
-
-```console
-npm i @microsoft/teams-js
-```
+After answering the generator's questions, the generator will create the scaffolding for the project and then execute **npm install** that downloads all the dependencies required by the project.
 
 ### Test the personal tab
 
 Before customizing the tab, let's test the tab to see the initial developer experience for testing.
 
-6. From the command line, navigate to the root folder for the project and execute the following command:
+From the command line, navigate to the root folder for the project and execute the following command:
 
 ```console
 gulp ngrok-serve --debug
 ```
 
-7. This gulp task will run many other tasks all displayed within the command-line console. The **ngrok-serve** task builds your project and starts a local web server (http://localhost:3007). It then starts ngrok with a random subdomain that creates a secure URL to your local webserver.
+This gulp task will run many other tasks all displayed within the command-line console. The **ngrok-serve** task builds your project and starts a local web server (`http://localhost:3007`). It then starts ngrok with a random subdomain that creates a secure URL to your local webserver.
 
 > [!NOTE]
 > Microsoft Teams requires all content displayed within a tab be loaded from an HTTPS request. In development, can be done using the tool [ngrok](https://www.ngrok.com) that creates a secure rotatable URL to your local HTTP webserver. Ngrok is included as a dependency within the project so there is nothing to setup or configure.
@@ -92,73 +82,83 @@ gulp ngrok-serve --debug
 
 ![Screenshot of gulp ngrok-serve.](../../Linked_Image_Files/4-Teams/task-modules/03-yo-teams-02.png)
 
-8. Open a browser and navigate to the ngrok URL displayed in the console:
+Open a browser and navigate to the ngrok URL displayed in the console:
 
 ![Screenshot of the local web app hosting the Teams tab project with the homepage loaded.](../../Linked_Image_Files/4-Teams/task-modules/03-yo-teams-03.png)
 
-9. Update the URL in the browser to load the tab created by the scaffolding process. Here you can see the page can determine that it isn't running within the Microsoft Teams client.
+Update the URL in the browser to load the tab created by the scaffolding process. Here you can see the page can determine that it isn't running within the Microsoft Teams client.
 
 ![Screenshot of the local web app hosting the Teams tab project with the tab loaded.](../../Linked_Image_Files/4-Teams/task-modules/03-yo-teams-04.png)
 
-10. Now let's load the tab in Microsoft Teams. In the browser, navigate to **https://teams.microsoft.com** and sign in with the credentials of a Work and School account.
+Now let's load the tab in Microsoft Teams. In the browser, navigate to **https://teams.microsoft.com** and sign in with the credentials of a Work and School account.
 
 > [!NOTE]
 > Microsoft Teams is available for use as a web client, desktop client and a mobile client. In this module, we will use the web client but any of the clients can be used.
 
-11. Using the app bar navigation menu, select the **More added apps** button. Then select **More apps**.
+Using the app bar navigation menu, select the **...** button. Then select **More apps**.
 
 ![Screenshot of More added apps dialog in Microsoft Teams.](../../Linked_Image_Files/4-Teams/task-modules/03-yo-teams-05.png)
 
-12. On the **Apps** page, select **Manage your apps** > **Publish an app** > **Upload a custom app**.
+On the **Apps** page, select **Manage your apps** > **Upload an app** > **Upload a custom app**.
 
-> [!NOTE]
-> If Developer Preview is turned on for Teams, the button is labelled **Upload an app** instead of **Publish an app**.
+In the file dialog that appears, select the Microsoft Teams package in your project. This app package is a ZIP file that can be found in the project's **./package** folder.
 
-13. In the file dialog that appears, select the Microsoft Teams package in your project. This app package is a ZIP file that can be found in the project's **./package** folder.
-
-14. Once the package is uploaded, Microsoft Teams will display a summary of the app. Here you can see some "todo" items to address. *None of these "todo" items are important to this exercise, so you'll leave them as is.*
+Once the package is uploaded, Microsoft Teams will display a summary of the app. Here you can see some "todo" items to address. *None of these "todo" items are important to this exercise, so you'll leave them as is.*
 
 ![Screenshot of Microsoft Teams app.](../../Linked_Image_Files/4-Teams/task-modules/03-yo-teams-06.png)
 
-15. Select the **Add** button to install the app, adding a new personal tab to your **More added apps** dialog:
+Select the **Add** button to install the app, adding a new personal tab to your **More added apps** dialog:
 
 ![Screenshot of the installed Microsoft Teams app in the More added apps dialog.](../../Linked_Image_Files/4-Teams/task-modules/03-yo-teams-07.png)
 
-16. Select the app to navigate to the new tab:
+Select the app to navigate to the new tab:
 
 ![Screenshot of the installed Microsoft Teams app personal tab.](../../Linked_Image_Files/4-Teams/task-modules/03-yo-teams-08.png)
 
-17. Notice that when the content page is loaded in a tab within the Microsoft Teams client, it's displaying the value of the `entityId` property of the tab, not the message "This isn't hosted in Microsoft Teams" as you saw when viewing the content page in the browser. The tab can detect if it's loaded within the Microsoft Teams client using the Microsoft Teams JavaScript SDK.
+Notice that when the content page is loaded in a tab within the Microsoft Teams client, it's displaying the value of the `entityId` property of the tab, not the message "This isn't hosted in Microsoft Teams" as you saw when viewing the content page in the browser. The tab can detect if it's loaded within the Microsoft Teams client using the Microsoft Teams JavaScript SDK.
 
-18. The next step is to make some changes to the project.
+The next step is to make some changes to the project.
 
-19. Next, stop the local web server by pressing <kbd>CTRL</kbd>+<kbd>C</kbd> in the console to stop the running process.
+Next, stop the local web server by pressing <kbd>CTRL</kbd>+<kbd>C</kbd> in the console to stop the running process.
 
 ### Implement the personal tab's user interface
 
 Now you can implement the user interface for the tab. The simple tab will have a basic interface.
 
-20. Locate and open the file that contains the React component used in the project: **./src/client/youTubePlayer1Tab/YouTubePlayer1Tab.tsx**.
+Locate and open the file that contains the React component used in the project: **./src/client/youTubePlayer1Tab/YouTubePlayer1Tab.tsx**.
 
-21. Update the `import` statements in this file to add components from the Fluent UI - React library. Find the following `import` statement at the top of the file that imports components from the Fluent UI - React library:
-
-```typescript
-import { Provider, Flex, Text, Button, Header } from "@fluentui/react-northstar";
-```
-
-22. Replace the previous statement with the following `import` statement:
+Update the `import` statements in this file to add components from the Fluent UI - React library. Find the following `import` statement at the top of the file that imports components from the Fluent UI - React library:
 
 ```typescript
-import { Provider, Flex, Text, Button, Header, Input } from "@fluentui/react-northstar";
+import {
+  Provider,
+  Flex,
+  Text,
+  Button,
+  Header
+} from "@fluentui/react-northstar";
 ```
 
-23. Update the state of the component to contain a video ID. Add the following statement after the existing `useState` statements in the **YouTubePlayer1Tab.tsx** file:
+Replace the previous statement with the following `import` statement:
+
+```typescript
+import {
+  Provider,
+  Flex,
+  Text,
+  Button,
+  Header,
+  Input
+} from "@fluentui/react-northstar";
+```
+
+Update the state of the component to contain a video ID. Add the following statement after the existing `useState` statement in the **YouTubePlayer1Tab.tsx** file:
 
 ```typescript
 const [youTubeVideoId, setYouTubeVideoId] = useState<string | undefined>("VlEH4vtaxp4");
 ```
 
-24. Add the following methods to the `YouTubePlayer1Tab` component. These methods will handle updating the state when specific events happen on the form you'll add to the component:
+Add the following methods to the `YouTubePlayer1Tab` component. These methods will handle updating the state when specific events happen on the form you'll add to the component:
 
 ```typescript
 const onShowVideo = (): void => {
@@ -168,7 +168,7 @@ const onChangeVideo = (): void => {
 };
 ```
 
-25. Locate the `return` statement and update to the following code. The component will now display state with a brief copyright statement:
+Locate the `return` statement and update to the following code. The component will now display state with a brief copyright statement:
 
 ```tsx
 return (
@@ -201,33 +201,33 @@ return (
 );
 ```
 
-26. The next step is to add some interactivity to the tab.
+The next step is to add some interactivity to the tab.
 
 ### Test the personal tab
 
 At this point, our Microsoft Teams app, implemented as a custom person tab is set up and working. Verify this by starting ngrok again and refreshing the Microsoft Teams interface.
 
-27. Increment the `version` property in the app's **./manifest/manifest.json** file so you can update the previously deployed Teams app. (Alternatively, use the npm program to update the version of the solution: `npm version patch`.)
+Increment the `version` property in the app's **./manifest/manifest.json** file so you can update the previously deployed Teams app. (Alternatively, use the npm program to update the version of the solution: **npm version patch**.)
 
-28. From the command line, navigate to the root folder for the project and execute the following command:
+From the command line, navigate to the root folder for the project and execute the following command:
 
 ```console
 gulp ngrok-serve --debug
 ```
 
-29. Upgrade the previously deployed Teams app with the updated app package.
+Upgrade the previously deployed Teams app with the updated app package by repeating the process of uploading a custom app. Microsoft Teams will upgrade the existing app because it has a matching app ID and the version has changed.
 
-30. In the browser, navigate back to the tab and notice the new UI you've implemented for the tab:
+In the browser, navigate back to the tab and notice the new UI you've implemented for the tab:
 
 ![Screenshot of the updated YouTube Player tab.](../../Linked_Image_Files/4-Teams/task-modules/03-yo-teams-09.png)
 
-31. Now you can update the project and add task modules to the custom Microsoft Teams app.
+Now you can update the project and add task modules to the custom Microsoft Teams app.
 
-## Task 2: Add video player task module
+## Add video player task module
 
 A task module can be a web page implemented with HTML and JavaScript. Create the video player task module by creating a new file, **player.html** in the **./src/public/youTubePlayer1Tab** folder in your project.
 
-1. Add the following HTML to the **player.html** file:
+Add the following HTML to the **player.html** file:
 
 ```html
 <!DOCTYPE html>
@@ -258,9 +258,9 @@ A task module can be a web page implemented with HTML and JavaScript. Create the
 </html>
 ```
 
-2. The video player task module will use the YouTube embedded player to show the specified video. The video will be defined in the query string when the **player.html** file is loaded.
+The video player task module will use the YouTube embedded player to show the specified video. The video will be defined in the query string when the **player.html** file is loaded.
 
-3. Implement the `<iframe>` embedded video player by adding the following JavaScript before the closing `</body>` tag in the **player.html** file:
+Implement the `<iframe>` embedded video player by adding the following JavaScript before the closing `</body>` tag in the **player.html** file:
 
 ```html
 <script>
@@ -283,11 +283,11 @@ A task module can be a web page implemented with HTML and JavaScript. Create the
 </script>
 ```
 
-4. Now, implement the task module in the personal tab.
+Now, implement the task module in the personal tab.
 
-5. Locate and open the **./src/client/youTubePlayer1Tab/YouTubePlayer1Tab.tsx** file.
+Locate and open the **./src/client/youTubePlayer1Tab/YouTubePlayer1Tab.tsx** file.
 
-6. First, add the following utility method to the `YouTubePlayer1Tab` component:
+First, add the following utility method to the `YouTubePlayer1Tab` component:
 
 ```typescript
 const appRoot = (): string => {
@@ -299,7 +299,19 @@ const appRoot = (): string => {
 };
 ```
 
-7. Next, add the following code to the `onShowVideo()` method:
+Next, locate the following `import` statement...
+
+```typescript
+import { app } from "@microsoft/teams-js";
+```
+
+... and update it to include a reference to the `dialog` object:
+
+```typescript
+import { app, dialog } from "@microsoft/teams-js";
+```
+
+Next, add the following code to the `onShowVideo()` method:
 
 ```typescript
 const onShowVideo = (): void => {
@@ -311,7 +323,7 @@ const onShowVideo = (): void => {
       height: 700
     }
   };
-  dialog.open(dialogInfo);
+  dialog.url.open(dialogInfo);
 };
 ```
 
@@ -319,21 +331,21 @@ This code will create a new `taskInfo` object with the details of the task modul
 
 ### Test the video player task module
 
-8. Save the modified files. The `ngrok` task will detect the changes and rerun the webpack task. Upon completion, the web page should refresh to show the updated content.
+Save the modified files. The `ngrok` task will detect the changes and rerun the webpack task. Upon completion, the web page should refresh to show the updated content.
 
-9. In the browser, navigate back to the tab in the Microsoft Teams interface. Select the **Show video** button. Microsoft Teams will load the video player task module with the specified video loaded in the embedded player:
+In the browser, navigate back to the tab in the Microsoft Teams interface. Select the **Show video** button. Microsoft Teams will load the video player task module with the specified video loaded in the embedded player:
 
 ![Screenshot of the YouTube Player task module with a video loaded in the web page.](../../Linked_Image_Files/4-Teams/task-modules/03-yo-teams-10.png)
 
-## Task 3: Add video selector task module
+## Add video selector task module
 
 Now let's update the project to include a task module that will enable the user to change the video loaded in the player task module. For this task module, you'll implement it similar to how the custom tab is implemented: as a React app.
 
 ### Create the task module's React app web page host
 
-1. Create a new file, **selector.html**, in the **./src/public/youTubePlayer1Tab** folder.
+Create a new file, **selector.html**, in the **./src/public/youTubePlayer1Tab** folder.
 
-2. Add the following HTML to it:
+Add the following HTML to it:
 
 ```html
 <!DOCTYPE html>
@@ -371,11 +383,11 @@ Now let's update the project to include a task module that will enable the user 
 
 ### Register the new page
 
-3. Next, register the page you created in the last step with the project's hosting infrastructure. This will also add the necessary HTTP headers to the page's response to ensure it can be loaded within an IFRAME, but only within a Microsoft Teams client.
+Next, register the page you created in the last step with the project's hosting infrastructure. This will also add the necessary HTTP headers to the page's response to ensure it can be loaded within an IFRAME, but only within a Microsoft Teams client.
 
-4. Create a new file, **VideoSelectorTaskModule.ts**, in the **./src/server/youTubePlayer1Tab** folder.
+Create a new file, **VideoSelectorTaskModule.ts**, in the **./src/server/youTubePlayer1Tab** folder.
 
-5. Add the following code to the file:
+Add the following code to the file:
 
 ```typescript
 import { PreventIframe } from "express-msteams-host";
@@ -385,7 +397,7 @@ import { PreventIframe } from "express-msteams-host";
 export class VideoSelectorTaskModule { }
 ```
 
-6. Now register the page by adding the following line to the end of the **./src/server/TeamsAppComponents.ts** file:
+Now register the page by adding the following line to the end of the **./src/server/TeamsAppComponents.ts** file:
 
 ```typescript
 export * from "./youTubePlayer1Tab/VideoSelectorTaskModule";
@@ -393,11 +405,11 @@ export * from "./youTubePlayer1Tab/VideoSelectorTaskModule";
 
 ### Implement the React app for the selector task module
 
-7. With the selector's page created and registered, the next step is to implement the React app that is loaded in the page.
+With the selector's page created and registered, the next step is to implement the React app that is loaded in the page.
 
-8. Create a new file, **VideoSelectorTaskModule.tsx**, in the folder **./src/client/youTubePlayer1Tab**.
+Create a new file, **VideoSelectorTaskModule.tsx**, in the folder **./src/client/youTubePlayer1Tab**.
 
-9. Add the following code to the page. Most of this code mirrors what you would see if you created a new tab.
+Add the following code to the page. Most of this code mirrors what you would see if you created a new tab.
 
 ```typescript
 import * as React from "react";
@@ -413,20 +425,20 @@ export const VideoSelectorTaskModule = () => {
   const [youTubeVideoId, setYouTubeVideoId] = useState<string | undefined>("VlEH4vtaxp4");
 
   const getQueryVariable = (variable: string): string | undefined => {
-      const query = window.location.search.substring(1);
-      const vars = query.split("&");
-      for (const varPairs of vars) {
-          const pair = varPairs.split("=");
-          if (decodeURIComponent(pair[0]) === variable) {
-              return decodeURIComponent(pair[1]);
-          }
+    const query = window.location.search.substring(1);
+    const vars = query.split("&");
+    for (const varPairs of vars) {
+      const pair = varPairs.split("=");
+      if (decodeURIComponent(pair[0]) === variable) {
+        return decodeURIComponent(pair[1]);
       }
-      return undefined;
+    }
+    return undefined;
   };
 
   useEffect(() => {
     if (inTeams === true) {
-      microsoftTeams.appInitialization.notifySuccess();
+      app.notifySuccess();
     } else {
       setEntityId("Not in Microsoft Teams");
     }
@@ -444,7 +456,7 @@ export const VideoSelectorTaskModule = () => {
 };
 ```
 
-10. Implement the user interface of the task module by adding the following code to the `return()` statement:
+Implement the user interface of the task module by adding the following code to the `return()` statement:
 
 ```tsx
 <Provider theme={theme}>
@@ -458,7 +470,7 @@ export const VideoSelectorTaskModule = () => {
 </Provider>
 ```
 
-11. Next, implement the two handlers referenced in the `render()` method. Add these two functions to the `VideoSelectorTaskModule` class:
+Next, implement the two handlers referenced in the `render()` method. Add these two functions to the `VideoSelectorTaskModule` class:
 
 ```typescript
 const handleOnChanged = (event): void => {
@@ -466,33 +478,19 @@ const handleOnChanged = (event): void => {
 };
 
 const handleOnClick = (): void => {
-  dialog.submit(youTubeVideoId, undefined);
+  dialog.url.submit(youTubeVideoId, undefined);
 };
 ```
 
-12. The `handleOnChanged()` method updates the state with the value specified in the input control, while the `handleOnClick()` method uses the Microsoft Teams SDK to pass the ID of the video back to the personal tab.
+The `handleOnChanged()` method updates the state with the value specified in the input control, while the `handleOnClick()` method uses the Microsoft Teams SDK to pass the ID of the video back to the personal tab.
 
-13. Make this React class available to the rest of the application by adding the following line to the **./src/client/client.ts** file:
+Make this React class available to the rest of the application by adding the following line to the **./src/client/client.ts** file:
 
 ```typescript
 export * from "./youTubePlayer1Tab/VideoSelectorTaskModule";
 ```
 
-14. The last step is to wire this task module up to the tab. Open the **./src/client/youTubePlayer1Tab/YouTubePlayer1Tab.tsx** file. Update the `import` statement in this file to add a namesspace from the Microsoft Teams SDK library.
-
-15. Find the following `import` statement at the top of the file that imports components from the Fluent UI - React library:
-
-```typescript
-import { app } from "@microsoft/teams-js";
-```
-
-16. Replace the previous statement with the following `import` statement:
-
-```typescript
-import { app, dialog } from "@microsoft/teams-js";
-```
-
-17. Locate the method `onChangeVideo()`. Add the following code to the method:
+Open the **./src/client/youTubePlayer1Tab/YouTubePlayer1Tab.tsx** file. Locate the method `onChangeVideo()`. Add the following code to the method:
 
 ```typescript
 const dialogInfo = {
@@ -504,31 +502,31 @@ const dialogInfo = {
   }
 };
 
-const submitHandler dialog.DialogSubmitHandler = (response) => {
+const submitHandler: dialog.DialogSubmitHandler = (response) => {
   console.log(`Submit handler - err: ${response.err}`);
   setYouTubeVideoId(response.result?.toString());
 };
 
-dialog.open(dialogInfo, submitHandler);
+dialog.url.open(dialogInfo, submitHandler);
 ```
 
 This code will first create the `dialogInfo` object that defines the task module. It also creates a callback that will take the result from the task module and use it to update the state of the React app.
 
 ### Test the video selector task module
 
-18. Save the modified files. The `ngrok` task will detect the changes and rerun the webpack task. Upon completion, the web page should refresh to show the updated content.
+Save the modified files. The `ngrok` task will detect the changes and rerun the webpack task. Upon completion, the web page should refresh to show the updated content.
 
-19. In the browser, navigate back to the tab in the Microsoft Teams interface.
+In the browser, navigate back to the tab in the Microsoft Teams interface.
 
-30. Select the **Change Video ID** button. Microsoft Teams will load the video selector task module with the ID of the currently selected video in the text control.
+Select the **Change Video ID** button. Microsoft Teams will load the video selector task module with the ID of the currently selected video in the text control.
 
 ![Screenshot of the YouTube Selector task module.](../../Linked_Image_Files/4-Teams/task-modules/03-yo-teams-11.png)
 
-21. Enter the ID of another YouTube video and select the **Update** button. Notice the ID of the video has changed. Now when you select the **Show video** button, the player task module loads with the new video.
+Enter the ID of another YouTube video and select the **Update** button. Notice the ID of the video has changed. Now when you select the **Show video** button, the player task module loads with the new video.
 
 ![Screenshot of the YouTube Player task module.](../../Linked_Image_Files/4-Teams/task-modules/03-yo-teams-12.png)
 
-22. Stop the local web server by pressing <kbd>CTRL</kbd>+<kbd>C</kbd> in the console to stop the running process.
+Stop the local web server by pressing <kbd>CTRL</kbd>+<kbd>C</kbd> in the console to stop the running process.
 
 ## Summary
 

@@ -1,31 +1,32 @@
 # Exercise 2: Using adaptive cards and deep links in task modules
 
+
 In this exercise, you'll learn how to use adaptive cards in a custom task module in a custom Microsoft Teams app. You'll also learn how to invoke task modules from anywhere within Microsoft Teams using deep links.
 
 > [!IMPORTANT]
 > This exercise assumes you have created the Microsoft Teams app project with the Yeoman generator that contains a personal tab from the previous exercise in this module. You'll update the project to add a new task module that uses an Adaptive Card.
 
-## Task 1: Create video selector as an adaptive card
+## Create video selector as an adaptive card
 
 In this section, you'll create an Adaptive Card that mirrors the functionality of the video selector task module created in a previous exercise. Adaptive Cards are defined using JSON that can be written by hand or using the Microsoft Teams Developer Portal.
 
-1. In the browser, navigate to **https://dev.teams.microsoft.com** and sign in with the credentials of a Work and School account.
+In the browser, navigate to **https://dev.teams.microsoft.com** and sign in with the credentials of a Work and School account.
 
-2. Select the **Tools** from the left-hand navigation then select **Adaptive Cards editor (Preview)** app:
+Select the **Tools** from the left-hand navigation then select **Adaptive Cards editor (Preview)** app:
 
 ![Screenshot of the Developer Portal highlighting the Adaptive Cards editor.](../../Linked_Image_Files/4-Teams/task-modules/05-dev-portal-01.png)
 
-3. In the Card editor, select **New card**.
+In the Card editor, select **New card**.
 
 ![Screenshot of the Developer Portal highlighting the New Card action.](../../Linked_Image_Files/4-Teams/task-modules/05-dev-portal-02.png)
 
-4. Provide a card name. The card we're creating is used as the YouTube Video Selector card. Select **Save**. The tool will display a list of example cards. Select **Blank Card**.
+Provide a card name. The card we're creating is used as the YouTube Video Selector card. Select **Save**. The tool will display a list of example cards. Select **Blank Card**.
 
-5. The Card editor will show a default card and its live preview. You can use this interface to design your card and see how it will be rendered.
+The editor will show a default card and its live preview. You can use this interface to design your card and see how it will be rendered.
 
 ![Screenshot of the Developer Portal Adaptive Card editor showing a blank card.](../../Linked_Image_Files/4-Teams/task-modules/05-dev-portal-03.png)
 
-6. From the **json** tab, replace the contents of the default card with the following JSON:
+From the **Custom card editor title** window at the bottom of the editor, replace the contents of the default card with the following JSON:
 
 ```json
 {
@@ -71,17 +72,17 @@ In this section, you'll create an Adaptive Card that mirrors the functionality o
 
 ![Screenshot of the YouTube Video Selector card.](../../Linked_Image_Files/4-Teams/task-modules/05-dev-portal-04.png)
 
-7. This JSON code instructs Microsoft Teams to render a textbox and button. When the button is selected, it will submit the card.
+This JSON code instructs Microsoft Teams to render a textbox and button. When the button is selected, it will submit the card.
 
-8. Copy and paste this JSON into a new file, **YouTubeSelectorCard.json**, into the folder in the existing project **./src/client/youTubePlayer1Tab/**.
+Copy and paste this JSON into a new file, **YouTubeSelectorCard.json**, into the folder in the existing project **./src/client/youTubePlayer1Tab/**.
 
-## Task 2: Create a new task module that uses the Adaptive Card
+## Create a new task module that uses the Adaptive Card
 
 After creating the Adaptive Card, the next step is to create a task module that will display it and handle the submission action.
 
-1. Within the existing Microsoft Teams app project, locate the file **./src/client/youTubePlayer1Tab/YouTubePlayer1Tab.tsx** that contains the custom personal tab.
+Within the existing Microsoft Teams app project, locate the file **./src/client/youTubePlayer1Tab/YouTubePlayer1Tab.tsx** that contains the custom personal tab.
 
-2. Find the following `import` statement at the top of the file that imports components from the Fluent UI - React library:
+Find the following `import` statement at the top of the file that imports components from the Fluent UI - React library:
 
 ```typescript
 import { app, dialog } from "@microsoft/teams-js";
@@ -93,13 +94,13 @@ Replace the previous statement with the following `import` statement:
 import { app, dialog, tasks } from "@microsoft/teams-js";
 ```
 
-3. Locate the `return` statement and add the following code to add a button after one of the existing buttons:
+Locate the `return` statement and add the following code to add a button after one of the existing buttons:
 
 ```tsx
 <Button content="Change Video ID (AdaptiveCard)" onClick={() => onChangeVideoAdaptiveCard()}></Button>
 ```
 
-4. Next, add the following method to the `YouTubePlayer1Tab` class:
+Next, add the following method to the `YouTubePlayer1Tab` component:
 
 ```typescript
 const onChangeVideoAdaptiveCard = (): void => {
@@ -117,9 +118,9 @@ const onChangeVideoAdaptiveCard = (): void => {
 ```
 
 > [!NOTE]
-> The `dialog.open()` method used in the previous exercise does not yet support an Adaptive Card as the body of the dialog. This exercise is using the deprecard `tasks.startTask()` method which still works.
+> The `dialog.open()` method used in the previous exercise does not yet support an Adaptive Card as the body of the dialog. This exercise is using the deprecated `tasks.startTask()` method which still works.
 
-5. The next step is to load the Adaptive Card and set the value of the video ID to display when it loads. Do this by adding the following code to the top of the `onChangeVideoAdaptiveCard()` method:
+The next step is to load the Adaptive Card and set the value of the video ID to display when it loads. Do this by adding the following code to the top of the `onChangeVideoAdaptiveCard()` method:
 
 ```typescript
 // load adaptive card
@@ -136,7 +137,7 @@ adaptiveCard.body.forEach((container: any) => {
 });
 ```
 
-6. Next, implement the callback. When the Adaptive Card executes the submit action, it will send an object back with all the input objects as properties. Update the existing `submitHandler()` in the `onChangeVideoAdaptiveCard()` function. This code will update the state with the value of the video ID specified in the Adaptive Card:
+Next, implement the callback. When the Adaptive Card executes the submit action, it will send an object back with all the input objects as properties. Update the existing `submitHandler()` in the `onChangeVideoAdaptiveCard()` function. This code will update the state with the value of the video ID specified in the Adaptive Card:
 
 ```typescript
 const submitHandler = (err: string, result: any): void => {
@@ -145,7 +146,7 @@ const submitHandler = (err: string, result: any): void => {
 };
 ```
 
-7. Lastly, add a new `card` property to the `taskModuleInfo` object, and set its value to the adaptive card. The resulting `taskModuleInfo` should look like the following code:
+Lastly, add a new `card` property to the `taskModuleInfo` object, and set its value to the Adaptive Card. The resulting `taskModuleInfo` should look like the following code:
 
 ```typescript
 const taskModuleInfo = {
@@ -158,49 +159,49 @@ const taskModuleInfo = {
 
 ### Test the Adaptive Card task module
 
-8. Save the modified files. The `ngrok` task will detect the changes and rerun the webpack task. Upon completion, the web page should refresh to show the updated content.
+Save the modified files. The `ngrok` task will detect the changes and rerun the webpack task. Upon completion, the web page should refresh to show the updated content.
 
-9. In the browser, navigate back to the tab in the Microsoft Teams interface and select the new button **Change Video ID (AdaptiveCard)**. Microsoft Teams will open a task module with the rendered Adaptive Card:
+In the browser, navigate back to the tab in the Microsoft Teams interface and select the new button **Change Video ID (AdaptiveCard)**. Microsoft Teams will open a task module with the rendered Adaptive Card:
 
 ![Screenshot of the Adaptive Card rendered in a task module.](../../Linked_Image_Files/4-Teams/task-modules/05-test-01.png)
 
-10. Replace the video ID in the input box and select **Update**. Notice the video ID displayed in the tab is updated to reflect this new value.
+Replace the video ID in the input box and select **Update**. Notice the video ID displayed in the tab is updated to reflect this new value.
 
-## Task 3: Invoking task modules with deep links
+## Invoking task modules with deep links
 
 Task modules can be invoked by selecting a button in the Microsoft Teams experience, or using a deep link. Deep links allow you to trigger a task module invocation from outside of Teams, or within Teams from a conversation.
 
-1. The format for a deep link is as follows:
+The format for a deep link is as follows:
 
 ```http
 https://teams.microsoft.com/l/task/<APP_ID>?url=<TaskInfo.url>&height=<TaskInfo.height>&width=<TaskInfo.width>&title=<TaskInfo.title>
 ```
 
-2. Consider if you wanted to open a task module from a conversation that would display the following video on an **[Overview of teams and channels](https://www.youtube.com/watch?v=VlEH4vtaxp4)**.
+Consider if you wanted to open a task module from a conversation that would display the following video on an **[Overview of teams and channels](https://www.youtube.com/watch?v=VlEH4vtaxp4)**.
 
-3. As you learned in a previous exercise, the URL to display the video in the player task module would be the following:
+As you learned in a previous exercise, the URL to display the video in the player task module would be the following:
 
 ```http
 https://{{REPLACE_WITH_YOUR_NGROK_URL}}/youTubePlayer1Tab/player.html?vid=VlEH4vtaxp4
 ```
 
-4. The deep link to launch the video player task module would be the following (*assuming your custom Microsoft Teams app's ID is 3386faf0-109f-11ea-9799-77a28170bd5d*):
+The deep link to launch the video player task module would be the following (*assuming your custom Microsoft Teams app's ID is 3386faf0-109f-11ea-9799-77a28170bd5d*):
 
 ```http
 https://teams.microsoft.com/l/task/3386faf0-109f-11ea-9799-77a28170bd5d?url=https://{{REPLACE_WITH_YOUR_NGROK_URL}}/youTubePlayer1Tab/player.html?vid=VlEH4vtaxp4&height=700&width=1000&title=YouTube%20Player:%20Overview%20of%20teams%20and%20channels
 ```
 
-5. In Microsoft Teams, go to a channel, select the **Conversations** tab, and select the **Format** button in the message dialog:
+In Microsoft Teams, go to a channel, select the **Conversations** tab, and select the **Format** button in the message dialog:
 
 ![Screenshot of the message dialog.](../../Linked_Image_Files/4-Teams/task-modules/05-test-02.png)
 
-6. Enter a message to post to the channel. Select some of the text and use the **Link** feature to add the deep link to the message:
+Enter a message to post to the channel. Select some of the text and use the **insert link** button on the toolbar to add the deep link to the message:
 
 ![Screenshot of the new message experience in a Conversations tab - adding a link.](../../Linked_Image_Files/4-Teams/task-modules/05-test-03.png)
 
 ![Screenshot of the new message experience in a Conversations tab.](../../Linked_Image_Files/4-Teams/task-modules/05-test-04.png)
 
-7. Now, select the link to see the task module open without having to trigger it from the custom tab.
+Now, select the link to see the task module open without having to trigger it from the custom tab.
 
 ## Summary
 

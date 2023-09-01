@@ -8,9 +8,9 @@ Developing Microsoft Teams apps requires a Microsoft 365 tenant, Microsoft Teams
 
 For the Microsoft 365 tenant, follow the instructions on [Microsoft Teams: Prepare your Microsoft 365 tenant](https://learn.microsoft.com/en-us/microsoftteams/platform/concepts/build-and-test/prepare-your-o365-tenant) for obtaining a developer tenant if you don't currently have a Microsoft 365 account. Make sure you have also enabled Microsoft Teams for your organization.
 
-Microsoft Teams must be configured to enable custom apps and allow custom apps to be uploaded to your tenant to build custom apps for Microsoft Teams. Follow the instructions on the same **Prepare your Microsoft 365 tenant** page mentioned above.
+Microsoft Teams must be configured to enable custom apps and allow custom apps to be uploaded to your tenant to build custom apps for Microsoft Teams. Follow the instructions on the same **Prepare your Microsoft 365 tenant** page mentioned previously.
 
-You'll use Node.js to create custom Microsoft Teams tabs in this module. The exercises in this module assume you've the following tools installed on your developer workstation.
+You'll use Node.js to create custom Microsoft Teams tabs in this module. The exercises in this module assume you have the following tools installed on your developer workstation.
 
 > [!IMPORTANT]
 > In most cases, installing the latest version of the following tools is the best option. The versions listed here were used when this module was published and last tested.
@@ -19,16 +19,16 @@ You'll use Node.js to create custom Microsoft Teams tabs in this module. The exe
 - npm (*installed with Node.js*)
 - [Gulp-cli](https://www.npmjs.com/package/gulp-cli) - v2.3.\*
 - [Yeoman](https://yeoman.io/) - v4.3.\*
-- [Yeoman Generator for Microsoft Teams](https://github.com/pnp/generator-teams) - v4.0.1
+- [Yeoman Generator for Microsoft Teams](https://github.com/pnp/generator-teams) - v4.1.\*
 - [Visual Studio Code](https://code.visualstudio.com)
 
 You must have the minimum versions of these prerequisites installed on your workstation.
 
-## Task 1: Create Microsoft Teams app
+## Create Microsoft Teams app
 
-1. Open your command prompt, navigate to a directory where you want to save your work, create a new folder **learn-msteams**, and change directory into that folder.
+Open your command prompt, navigate to a directory where you want to save your work, create a new folder **learn-msteams**, and change directory into that folder.
 
-2. Run the Yeoman Generator for Microsoft Teams by running the following command:
+Run the Yeoman Generator for Microsoft Teams by running the following command:
 
 ```console
 yo teams
@@ -36,54 +36,55 @@ yo teams
 
 ![Screenshot of the Yeoman Generator for Microsoft Teams.](../../Linked_Image_Files/4-Teams/webhooks-connectors/03-yo-teams-01.png)
 
-3. Yeoman will launch and ask you a series of questions. Answer the questions with the following values:
+Yeoman will launch and ask you a series of questions. Answer the questions with the following values:
 
 - **What is your solution name?**: TeamsWebhooks
 - **Where do you want to place the files?**: Use the current folder
 - **Title of your Microsoft Teams App project?**: Teams Webhooks
 - **Your (company) name? (max 32 characters)**: Contoso
-- **Which manifest version would you like to use?**: v1.13
+- **Which manifest version would you like to use?**: 1.15 (With support for extending Teams apps to other parts of the Microsoft 365 ecosystem)
 - **Quick scaffolding**: Yes
 - **What features do you want to add to your project?**: An Outgoing Webhook
-- **The URL where you will host this solution?**: (Accept the default option)
+- **The URL where you will host this solution?**: *(Accept the default option)*
 - **Would you like show a loading indicator when your app/tab loads?**: No
 - **Name of your outgoing webhook?**: Teams Webhooks Outgoing Webhook
 
 > [!NOTE]
 > Most of the answers to these questions can be changed after creating the project. For example, the URL where the project will be hosted isn't important at the time of creating or testing the project.
 
-4. After answering the generator's questions, the generator will create the scaffolding for the project and then execute `npm install` that downloads all the dependencies required by the project.
+After answering the generator's questions, the generator will create the scaffolding for the project and then execute **npm install** that downloads all the dependencies required by the project.
 
-5. To simplify working with collections, install the Lodash library by executing the following commands in the command line from the root folder of the project:
-```console
-npm install lodash -S
-```
-
-6. Add the AdaptiveCards templating library by executing the following command:
+To simplify working with collections, install the Lodash library by executing the following commands in the command line from the root folder of the project:
 
 ```console
-npm install adaptive-expressions adaptivecards-templating
+npm install lodash -SE
 ```
 
-## Task 2: Code the outgoing webhook
+Add the AdaptiveCards templating library by executing the following command:
 
-1. The Yeoman Generator for Microsoft Teams created a stub web service endpoint for our outgoing webhook. Locate and open the file **./src/server/teamsWebhooksOutgoingWebhook/TeamsWebhooksOutgoingWebhook.ts**. It listens for HTTPS requests at the endpoint **/api/webhook**.
+```console
+npm install adaptive-expressions adaptivecards-templating -SE
+```
 
-2. Find the `requestHander()` method in the `TeamsWebhooksOutgoingWebhook` class. The method first checks the HMAC value in the authorization header against the security token that you'll obtain when you add the webhook to a team.
+## Code the outgoing webhook
 
-3. Locate the following code:
+The Yeoman Generator for Microsoft Teams created a stub web service endpoint for our outgoing webhook. Locate and open the file **./src/server/teamsWebhooksOutgoingWebhook/TeamsWebhooksOutgoingWebhook.ts**. It listens for HTTPS requests at the endpoint **/api/webhook**.
+
+Find the `requestHander()` method in the `TeamsWebhooksOutgoingWebhook` class. The method first checks the HMAC value in the authorization header against the security token that you'll obtain when you add the webhook to a team.
+
+Locate the following code:
 
 ```typescript
 message.text = `Echo ${incoming.text}`;
 ```
 
-4. This code simply echoes the string entered in the message back to Microsoft Teams that will be added in a reply to the message that triggered the webhook.
+This code simply echoes the string entered in the message back to Microsoft Teams that will be added in a reply to the message that triggered the webhook.
 
-5. Let's update this code to add some real functionality. When a user @mentions the webhook, if they enter the name of a known planet of our solar system, it will respond with an adaptive card that displays details of the planet.
+Let's update this code to add some real functionality. When a user @mentions the webhook, if they enter the name of a known planet of our solar system, it will respond with an adaptive card that displays details of the planet.
 
-6. Let's start by adding two resource files to the project.
+Let's start by adding two resource files to the project.
 
-7. Create a new file **planets.json** in the **./src/server/teamsWebhooksOutgoingWebhook** folder and add the following JSON to it. This file will contain an array of planet details:
+Create a new file **planets.json** in the **./src/server/teamsWebhooksOutgoingWebhook** folder and add the following JSON to it. This file will contain an array of planet details:
 
 ```json
 [
@@ -178,7 +179,7 @@ message.text = `Echo ${incoming.text}`;
 ]
 ```
 
-8. Next, create a new file **planetDisplayCard.json** in the **./src/server/teamsWebhooksOutgoingWebhook** folder and add the following JSON to it. This file will contain a template of the adaptive card the web service will respond with:
+Next, create a new file **planetDisplayCard.json** in the **./src/server/teamsWebhooksOutgoingWebhook** folder and add the following JSON to it. This file will contain a template of the adaptive card the web service will respond with:
 
 ```json
 {
@@ -278,7 +279,7 @@ message.text = `Echo ${incoming.text}`;
 }
 ```
 
-9. Add the following `import` statements to the **./src/server/teamsWebhooksOutgoingWebhook/TeamsWebhooksOutgoingWebhook.ts** file, just after the existing `import` statements:
+Add the following `import` statements to the **./src/server/teamsWebhooksOutgoingWebhook/TeamsWebhooksOutgoingWebhook.ts** file, just after the existing `import` statements:
 
 ```typescript
 import { CardFactory } from "botbuilder";
@@ -286,7 +287,7 @@ import { find, sortBy } from "lodash";
 import * as ACData from "adaptivecards-templating";
 ```
 
-10. Add the following method to the `TeamsWebhooksOutgoingWebhook` class. The `getPlanetDetailCard()` method will load and populate the adaptive card template with details using the provided planet object:
+Add the following method to the `TeamsWebhooksOutgoingWebhook` class. The `getPlanetDetailCard()` method will load and populate the adaptive card template with details using the provided planet object:
 
 ```typescript
 private static getPlanetDetailCard(selectedPlanet: any): builder.Attachment {
@@ -303,7 +304,7 @@ private static getPlanetDetailCard(selectedPlanet: any): builder.Attachment {
 }
 ```
 
-11. Next, add the following method to the `TeamsWebhooksOutgoingWebhook` class. The `processAuthenticatedRequest()` method takes the incoming text uses it to find a planet in the **planets.json** file. If it finds one, it calls the `getPlanetDetailCard()` method to get an adaptive card and returns it as an `Activity` that will be sent back to Microsoft Teams. If a planet isn't found, it just echoes the text back in a reply to the request:
+Next, add the following method to the `TeamsWebhooksOutgoingWebhook` class. The `processAuthenticatedRequest()` method takes the incoming text uses it to find a planet in the **planets.json** file. If it finds one, it calls the `getPlanetDetailCard()` method to get an adaptive card and returns it as an `Activity` that will be sent back to Microsoft Teams. If a planet isn't found, it just echoes the text back in a reply to the request:
 
 ```typescript
 private static processAuthenticatedRequest(incomingText: string): Partial<builder.Activity> {
@@ -329,7 +330,7 @@ private static processAuthenticatedRequest(incomingText: string): Partial<builde
 }
 ```
 
-12. Add the following `scrubMessage()` method to the `TeamsWebhooksOutgoingWebhook` class. A user must @mention an outgoing webhook to send a message to it. This method will remove the `<at></at>` text and any spaces to extract the planet name:
+Add the following `scrubMessage()` method to the `TeamsWebhooksOutgoingWebhook` class. A user must @mention an outgoing webhook to send a message to it. This method will remove the `<at></at>` text and any spaces to extract the planet name:
 
 ```typescript
 private static scrubMessage(incomingText: string): string {
@@ -340,7 +341,7 @@ private static scrubMessage(incomingText: string): string {
 }
 ```
 
-13. Finally, update the `requestHandler()` method:
+Finally, update the `requestHandler()` method:
 
 - Locate the following code and change the `message` declaration from a `const` to `let` as you'll change this value.
 
@@ -363,21 +364,21 @@ private static scrubMessage(incomingText: string): string {
     message = TeamsWebhooksOutgoingWebhook.processAuthenticatedRequest(scrubbedText);
     ```
 
-## Task 3: Test the outgoing webhook
+## Test the outgoing webhook
 
-1. From the command line, navigate to the root folder for the project and execute the following command:
+From the command line, navigate to the root folder for the project and execute the following command:
 
 ```console
 gulp serve --debug
 ```
 
-2. Next, open a new console window and execute the following command:
+Next, open a new console window and execute the following command:
 
 ```console
 ngrok http 3007
 ```
 
-3. This command will create dynamic HTTP and HTTPS URLs with unique subdomains that will redirect to your local web server. Make a note of the dynamic HTTPS URL because you'll need it later.
+This command will create dynamic HTTP and HTTPS URLs with unique subdomains that will redirect to your local web server. Make a note of the dynamic HTTPS URL because you'll need it later.
 
 ![Screenshot of the console with ngrok URL.](../../Linked_Image_Files/4-Teams/webhooks-connectors/03-ngrok-01.png)
 
@@ -386,21 +387,21 @@ ngrok http 3007
 >
 > However, you can restart the web server you started with **gulp serve** without impacting ngrok.
 
-4. Now let's add the outgoing webhook to a team in Microsoft Teams. In the browser, navigate to **https://teams.microsoft.com** and sign in with the credentials of a Work and School account.
+Now let's add the outgoing webhook to a team in Microsoft Teams. In the browser, navigate to **https://teams.microsoft.com** and sign in with the credentials of a Work and School account.
 
-5. Once you're signed in, select a channel in a team you want to add the webhook to. From the channel's page, select the **+** in the top navigation:
+Once you're signed in, select a channel in a team you want to add the webhook to. From the channel's page, select the **+** in the top navigation:
 
 ![Screencast of the channel home page.](../../Linked_Image_Files/4-Teams/webhooks-connectors/03-test-02.png)
 
-6. On the **Add a tab** dialog, select **Manage apps** in the lower right corner:
+On the **Add a tab** dialog, select **Manage apps** in the lower right corner:
 
 ![Screenshot of the Add a tab dialog.](../../Linked_Image_Files/4-Teams/webhooks-connectors/03-test-03.png)
 
-7. This will take you to the **Manage Channel** page. Select the **Create an outgoing webhook** in the lower right corner:
+This will take you to the **Manage Channel** page. Select the **Create an outgoing webhook** in the lower right corner:
 
 ![Screenshot of the Manage channel page.](../../Linked_Image_Files/4-Teams/webhooks-connectors/03-test-04.png)
 
-8. In the **Create an outgoing webhook** dialog, enter the following values, and select **Create**:
+In the **Create an outgoing webhook** dialog, enter the following values, and select **Create**:
 
 - **Name**: Planet Details
 - **Callback URL**: https://{{REPLACE_NGROK_SUBDOMAIN}}.ngrok.io/api/webhook
@@ -410,13 +411,13 @@ ngrok http 3007
 
 - **Description**: View details about the planet entered in the message.
 
-9. After creating the outgoing webhook, Microsoft Teams will display a security token.
+After creating the outgoing webhook, Microsoft Teams will display a security token.
 
 ![Screenshot of the security token.](../../Linked_Image_Files/4-Teams/webhooks-connectors/03-test-05.png)
 
-10. Copy this value and set the `SECURITY_TOKEN` property in the **./.env** file in the project.
+Copy this value and set the `SECURITY_TOKEN` property in the **./.env** file in the project.
 
-11. Stop the project's local web server by pressing <kbd>CTRL</kbd>+<kbd>C</kbd> and restart it by executing the following command:
+Stop the project's local web server by pressing <kbd>CTRL</kbd>+<kbd>C</kbd> and restart it by executing the following command:
 
 ```console
 gulp serve --debug
@@ -425,15 +426,15 @@ gulp serve --debug
 > [!CAUTION]
 > Be careful to only stop the web server. Don't stop the ngrok process. If you do, you'll need to update the outgoing webhook registration with a new URL after restarting ngrok.
 
-12. Now you can test the webhook. Go to a channel's **Conversation** tab within the team and enter the message **@Planet Details Venus**. Notice that as you're typing the message, Microsoft Teams detects the name of the webhook:
+Now you can test the webhook. Go to a channel's **Conversation** tab within the team and enter the message **@Planet Details Venus**. Notice that as you're typing the message, Microsoft Teams detects the name of the webhook:
 
 ![Screenshot of the Planet Details message.](../../Linked_Image_Files/4-Teams/webhooks-connectors/03-test-06.png)
 
-13. A few seconds after submitting the message, you'll see a reply to your message appear that contains the customized adaptive card with details about the planet:
+A few seconds after submitting the message, you'll see a reply to your message appear that contains the customized adaptive card with details about the planet:
 
 ![Screenshot of the Planet Details response.](../../Linked_Image_Files/4-Teams/webhooks-connectors/03-test-07.png)
 
-14. You've successfully tested your outgoing webhook! Stop the local web server by pressing <kbd>CTRL</kbd>+<kbd>C</kbd> in the command prompt.
+You've successfully tested your outgoing webhook! Stop the local web server by pressing <kbd>CTRL</kbd>+<kbd>C</kbd> in the command prompt.
 
 ## Summary
 

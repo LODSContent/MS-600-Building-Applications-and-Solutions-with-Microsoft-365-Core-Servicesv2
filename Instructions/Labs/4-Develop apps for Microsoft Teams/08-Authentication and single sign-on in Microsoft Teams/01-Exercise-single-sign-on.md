@@ -1,22 +1,23 @@
 # Exercise 1: Implement single sign-on for Microsoft Teams apps
 
+
 The Microsoft Teams Toolkit can register the Azure Active Directory (Azure AD) application in a single sign-in (SSO) project.
 
 In this exercise, you'll learn how to manually register and configure the Azure AD app that can be used to implement SSO in a Microsoft Teams app to better understand all the required settings.
 
-## Task 1: Register an Azure AD application to support single sign-on (SSO)
+## Register an Azure AD application to support single sign-on (SSO)
 
-1. Open a browser and navigate to the [Azure Active Directory admin center (https://aad.portal.azure.com)](https://aad.portal.azure.com). Sign in using a **Work or School Account** that has global administrator rights to the tenancy.
+Open a browser and navigate to the [Azure Active Directory admin center (https://aad.portal.azure.com)](https://aad.portal.azure.com). Sign in using a **Work or School Account** that has global administrator rights to the tenancy.
 
-2. Select **Manage > App registrations** in the left-hand navigation and then select **New registration**.
+Select **Manage > App registrations** in the left-hand navigation and then select **New registration**.
 
 ![Screenshot of the App registrations.](../../Linked_Image_Files/4-Teams/sso/03-azure-ad-app-registration-01.png)
 
-3. On the **Register an application** page, set the values as follows, and then select **Register**:
+On the **Register an application** page, set the values as follows, and then select **Register**:
 
 - **Name**: My Teams SSO App
 - **Supported account types**: Accounts in any organizational directory (Any Azure AD directory - Multitenant)
-- **Redirect URI**: Web & `https://REPLACE.ngrok.io/auth-end`
+- **Redirect URI**: Web and `https://REPLACE.ngrok.io/auth-end`
 
 ![Screenshot of the Register an application page.](../../Linked_Image_Files/4-Teams/sso/03-azure-ad-app-registration-02.png)
 
@@ -27,15 +28,15 @@ In this exercise, you'll learn how to manually register and configure the Azure 
 >
 > For now, we'll just use this temporary domain.
 
-4. On the **My Teams SSO App** page, copy the value of the **Application (client) ID**; you'll need this later when you create the Microsoft Teams app in a future exercise.
+On the **My Teams SSO App** page, copy the value of the **Application (client) ID**; you'll need this later when you create the Microsoft Teams app in a future exercise.
 
 ![Screenshot of the application ID of the new app registration.](../../Linked_Image_Files/4-Teams/sso/03-azure-ad-app-registration-03.png)
 
 ### Configure authentication
 
-5. Next, configure the app's authentication settings. Select **Manage > Authentication** from the left-hand navigation.
+Next, configure the app's authentication settings. Select **Manage > Authentication** from the left-hand navigation.
 
-6. In the **Implicit grant and hybrid flows** section, select both of the following options, and then select **Save** at the bottom of the screen:
+In the **Implicit grant and hybrid flows** section, select both of the following options, and then select **Save** at the bottom of the screen:
 
 ![Screenshot of the app's authentication settings.](../../Linked_Image_Files/4-Teams/sso/03-azure-ad-app-registration-04.png)
 
@@ -43,17 +44,17 @@ In this exercise, you'll learn how to manually register and configure the Azure 
 
 For an app to authenticate with Azure AD, it needs both the client ID and a client secret.
 
-7. Select **Manage > Certificates & secrets** from the left-hand navigation.
+Select **Manage > Certificates and secrets** from the left-hand navigation.
 
-8. In the **Client Secrets** section, select **New client secret**. Add a description and select an expiration duration, then select **Add**.
+In the **Client Secrets** section, select **New client secret**. Add a description and select an expiration duration, then select **Add**.
 
-9. When the secret is created, it will be shown one time so make sure you copy this for use in a later exercise. If you don't copy this value, you'll have to create a new secret as you can't ever view a previously created secret.
+When the secret is created, it will be shown one time so make sure you copy this for use in a later exercise. If you don't copy this value, you'll have to create a new secret as you can't ever view a previously created secret.
 
 ### Configure API permissions
 
-10. Now configure the API permissions the app will need. Select **Manage > API permissions** from the left-hand navigation.
+Now configure the API permissions the app will need. Select **Manage > API permissions** from the left-hand navigation.
 
-11. By default, the app has the **User.Read** permission. When Microsoft Teams requests an access token from Azure AD for the currently signed in user, it can only get basic permissions that identify who the user is. To enable this, you'll need to add the basic OpenID permissions.
+By default, the app has the **User.Read** permission. When Microsoft Teams requests an access token from Azure AD for the currently signed in user, it can only get basic permissions that identify who the user is. To enable this, you'll need to add the basic OpenID permissions.
 
 - Select **Add a permission > Microsoft Graph > Delegated permissions**.
 - Find and select the following permissions and then select **Add permissions** to add them to the app:
@@ -64,19 +65,19 @@ For an app to authenticate with Azure AD, it needs both the client ID and a clie
 
 ![Screenshot adding permissions to the app.](../../Linked_Image_Files/4-Teams/sso/03-azure-ad-app-registration-05.png)
 
-12. Once you've added the permissions, select the **Grant admin consent for ...** to consent these permissions for all users in the tenant.
+Once you've added the permissions, select the **Grant admin consent for ...** to consent these permissions for all users in the tenant.
 
 ![Screenshot of consented permissions.](../../Linked_Image_Files/4-Teams/sso/03-azure-ad-app-registration-06.png)
 
 ### Expose an API for the app
 
-13. The next step is to configure the app's API for Microsoft Teams. Select **Manage > Expose an API** from the left-hand navigation.
+The next step is to configure the app's API for Microsoft Teams. Select **Manage > Expose an API** from the left-hand navigation.
 
-14. On the **Expose an API** page, select the **Set** link next to the **Application ID URI**. This will default the app's ID to `api://<app-id>`. This needs to include the domain where the Microsoft Teams app will be hosted. Add `REPLACE.ngrok.io/` to the start of the address after the protocol and select **Save**
+On the **Expose an API** page, select the **Set** link next to the **Application ID URI**. This will default the app's ID to `api://<app-id>`. This needs to include the domain where the Microsoft Teams app will be hosted. Add `REPLACE.ngrok.io/` to the start of the address after the protocol and select **Save**
 
 ![Screencast of the app ID URI.](../../Linked_Image_Files/4-Teams/sso/03-azure-ad-app-registration-07.png)
 
-15. Next, select **Add a scope** to add a new permission for the app. Create a new scope using the following settings and then select **Add scope**:
+Next, select **Add a scope** to add a new permission for the app. Create a new scope using the following settings and then select **Add scope**:
 
 - **Scope name:** access_as_user
 - **Who can consent?** Admins and users
@@ -88,29 +89,29 @@ For an app to authenticate with Azure AD, it needs both the client ID and a clie
 
 ![Screenshot of the add scope page.](../../Linked_Image_Files/4-Teams/sso/03-azure-ad-app-registration-08.png)
 
-16. The last step is to preauthorize the Microsoft Teams clients that the app's API will trust. This means users won't be asked to consent to specific permissions, or scopes, exposed by the API.
+The last step is to preauthorize the Microsoft Teams clients that the app's API will trust. This means users won't be asked to consent to specific permissions, or scopes, exposed by the API.
 
-17. Add the following client applications by selecting the **Add a client application** link. For each, select the **api://REPLACE.ngrok.io/\<app-id>/access_as_user** scope you previously created:
+Add the following client applications by selecting the **Add a client application** link. For each, select the **api://REPLACE.ngrok.io/\<app-id>/access_as_user** scope you previously created:
 
 - `1fec8e78-bce4-4aaf-ab1b-5451cc387264`
-  - *Microsoft Teams mobile & desktop clients*
+  - *Microsoft Teams mobile and desktop clients*
 - `5e3ce6c0-2b1f-4285-8d4b-75ee78787346`
   - *Microsoft Teams web client*
 
-## Task 2: Review
+## Review
 
-1. At this point, you've now registered an Azure AD application that can be used by Microsoft Teams apps to support SSO for your users.
+At this point, you've now registered an Azure AD application that can be used by Microsoft Teams apps to support SSO for your users.
 
-2. While the application has been registered, you'll need to come back and make a few changes depending on the features of your custom Microsoft Teams app:
+While the application has been registered, you'll need to come back and make a few changes depending on the features of your custom Microsoft Teams app:
 
 ### Update the app's URL
 
-3. When you create the Microsoft Teams app, you'll need to revisit this Azure AD application to update the places where you entered the URL where the application is hosted. This is true both during development and when the application is deployed to production.
+When you create the Microsoft Teams app, you'll need to revisit this Azure AD application to update the places where you entered the URL where the application is hosted. This is true both during development and when the application is deployed to production.
 
-4. Anywhere you entered **REPLACE.ngrok.io** will need to be updated with the location of the web app that implements the custom Microsoft Teams app.
+Anywhere you entered **REPLACE.ngrok.io** will need to be updated with the location of the web app that implements the custom Microsoft Teams app.
 
 ### Add more API permissions
 
-5. The Azure AD app you've registered only has the most basic permissions to identify the user (**email**, **offline_access**, **openid**, and **profile**).
+The Azure AD app you've registered only has the most basic permissions to identify the user (**email**, **offline_access**, **openid**, and **profile**).
 
-6. It also contains the Microsoft Graph **User.Read** permission to obtain basic information about the user. If your custom Microsoft Teams app needs extra permissions to Microsoft Graph or another app, you'll need to add them to the Azure AD app's registration.
+It also contains the Microsoft Graph **User.Read** permission to obtain basic information about the user. If your custom Microsoft Teams app needs extra permissions to Microsoft Graph or another app, you'll need to add them to the Azure AD app's registration.

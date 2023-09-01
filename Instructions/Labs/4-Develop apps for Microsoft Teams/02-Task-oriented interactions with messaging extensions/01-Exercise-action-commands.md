@@ -36,7 +36,7 @@ The first step is to create a new Microsoft Teams bot for your messaging extensi
 
 ### Register the bot with Microsoft Azure's Bot Framework
 
-Open a browser and navigate to the [Azure portal](https://portal.azure.com). Sign in using a **Work or School Account** that has rights to create resources in your Azure subscription.
+Open a browser and navigate to the [Azure portal](https://portal.azure.com). Sign in using a **Work or School Account** that has rights to create resources in your Azure subscription.  Be sure to complete these exercises in a practice/dev tenant that you do NOT want to permanently make changes in.
 
 Select **Create a resource** in the left-hand navigation:
 
@@ -658,7 +658,7 @@ This gulp task will run many other tasks all displayed within the command-line c
 
 Note the URL of the ngrok URL displayed in the console. In the previous screenshot, ngrok has created the temporary URL **ec7d937d.ngrok.io** that will map to our locally running web server. In order for the Bot Framework to route messages from Microsoft Teams to our locally running bot, you need to update the bot's messaging endpoint in the Azure portal.
 
-Open a browser and navigate to the [Azure portal](https://portal.azure.com) and sign in using a **Work or School Account** that has rights to create resources in your Azure subscription.
+Open a browser and navigate to the [Azure portal](https://portal.azure.com) and sign in using a **Work or School Account** that has rights to create resources in your Azure subscription.  Be sure to complete these exercises in a practice/dev tenant that you do NOT want to permanently make changes in.
 
 Locate the bot by selecting the Azure resource group and Bot Channels Registration resource you created at the beginning of this exercise.
 

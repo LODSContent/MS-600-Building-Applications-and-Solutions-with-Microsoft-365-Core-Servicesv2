@@ -41,7 +41,7 @@ For now, we'll assume the subdomain is `REPLACE.ngrok.io`.
 > [!TIP]
 > Keep note of all the locations where you enter this value so you can update it later each time you restart the project you'll create later in this exercise.
 
-Open a browser and navigate to the [Azure portal](https://portal.azure.com). Sign in using a **Work or School Account** that has rights to create resources in your Azure subscription.
+Open a browser and navigate to the [Azure portal](https://portal.azure.com). Sign in using a **Work or School Account** that has rights to create resources in your Azure subscription.  Be sure to complete these exercises in a practice/dev tenant that you do NOT want to permanently make changes in.
 
 Select **Create a resource** in the left-hand navigation:
 

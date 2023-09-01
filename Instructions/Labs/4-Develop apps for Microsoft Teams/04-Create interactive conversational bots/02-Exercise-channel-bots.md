@@ -7,11 +7,11 @@ In this exercise, you’ll modify the existing Microsoft Teams app to update you
 > [!IMPORTANT]
 > This exercise assumes you have created the Microsoft Teams app project with the Yeoman generator from the previous exercise in this module.
 
-## Task 1: Detect conversation in a channel
+## Detect conversation in a channel
 
 In this section, you'll modify the existing Microsoft Teams app to properly respond to messages from the **Posts** tab.
 
-1. From the command line, navigate to the root folder for the project and execute the following command:
+From the command line, navigate to the root folder for the project and execute the following command:
 
 ```console
 gulp ngrok-serve --debug
@@ -22,65 +22,54 @@ gulp ngrok-serve --debug
 
 ### Install the app in a channel
 
-2. Navigate to (or create) a Team for testing the channel conversation. In the Teams list, select **More options** next to the Team. Then select **Manage team**.
+Navigate to (or create) a Team for testing the channel conversation. In the Teams list, select **More options** next to the Team. Then select **Manage team**.
 
 ![Screenshot of selecting the Manage team option.](../../Linked_Image_Files/4-Teams/conversation-bots/05-channel-app-01.png)
 
-3. Select the **Apps** tab and then **Upload a custom app**.
+Select the **Apps** tab and then **Upload a custom app**.
 
 ![Screenshot of the Apps tab of the Manage Team page.](../../Linked_Image_Files/4-Teams/conversation-bots/05-channel-app-02.png)
 
-4. In the file dialog that appears, select the Microsoft Teams package in your project. This app package is a ZIP file that can be found in the project's **./package** folder.
+In the file dialog that appears, select the Microsoft Teams package in your project. This app package is a ZIP file that can be found in the project's **./package** folder.
 
-5. After the package is uploaded, Microsoft Teams displays a summary of the app. Select the **Add** button, and select **Add to a team** to install the app.
+After the package is uploaded, Microsoft Teams displays a summary of the app. Select the **Add** button, and select **Add to a team** to install the app.
 
-6. In a channel of the Team, @ mention the bot, sending the `mention` command. Notice that the response doesn't mention the user.
+In a channel of the Team, @ mention the bot, sending the `mention` command. Notice that the response doesn't mention the user.
 
 ![Screenshot of the conversation with incorrect response.](../../Linked_Image_Files/4-Teams/conversation-bots/05-channel-app-03.png)
 
 ### Update the bot code
 
-In the previous exercise, our code was looking for the specific message `MentionMe` to respond. This works in a 1:1 personal chat because the bot isn't mentioned in the conversation.
+In the previous exercise, our code was looking for the specific message **Mention Me** to respond. This works in a 1:1 personal chat because the bot isn't mentioned in the conversation.
 
 However, in a channel conversation, a user must @mention the bot to trigger it. This results in a message containing a reference to the bot, not just the message submitted.
 
 While there are multiple ways to address this, let's check the type of conversation the message is from and handle it correctly.
 
-7. Locate and open the bot in the file **./src/server/conversationalBot/dialogs/mainDialog.ts**. Locate the existing `actStep()` method in the class and find the `switch` statement that checks the activity text. Add the following `if` statement above the `switch` statement:
+Locate and open the bot in the file **./src/server/conversationalBot/dialogs/mainDialog.ts**. Locate the existing `actStep()` method in the class and find the `switch` statement that checks the activity text (*it's in the `else if (this.onboarding)` block*). Add the following `if` statement above the `switch` statement:
 
 ```typescript
 if (stepContext.context.activity.conversation.conversationType === "channel") {
   TurnContext.removeRecipientMention(stepContext.context.activity);
 }
-
-// existing switch statement
-switch (stepContext.context.activity.text) {
-  ...
-}
 ```
 
-8. In the switch statement, the text from the command is not included. Update the switch statement to include the text `mention me`:
+In the `switch` statement, the text from the command isn't included. Verify the `switch` statement to include the text `mention me` should be listed immediately before the `case "mention"` statement.
 
 ```typescript
 switch (stepContext.context.activity.text) {
-  case "who": {
-    return await stepContext.beginDialog("teamsInfoDialog");
-  }
-  case "help": {
-    return await stepContext.beginDialog("helpDialog");
-  }
+  // .. existing code omitted for brevity
+
   case "mention me":
   case "mention": {
     return await stepContext.beginDialog("mentionUserDialog");
   }
-  default: {
-    await stepContext.context.sendActivity("Ok, maybe next time 😉");
-    return await stepContext.next();
-  }
+
+  // .. existing code omitted for brevity
+}
 ```
 
-
-9. In the context of a channel, the repeated prompt "What else can I do for you?" may be too noisy. The prompt can be suppressed when in a channel by updating the `finalStep` method. Replace the `finalStep` method with the following:
+In the context of a channel, the repeated prompt "What else can I do for you?" may be too noisy. The prompt can be suppressed when in a channel by updating the `finalStep` method. Replace the `finalStep` method with the following:
 
 ```typescript
 private async finalStep(stepContext: WaterfallStepContext): Promise<DialogTurnResult> {
@@ -92,28 +81,27 @@ private async finalStep(stepContext: WaterfallStepContext): Promise<DialogTurnRe
 }
 ```
 
-10. Save your changes, update, and test the installed app.
+Save your changes, update, and test the installed app.
 
-11. The `gulp` task will detect the change and run the **webpack:server** task.
+The **gulp** task will detect the change and run the **webpack:server** task.
 
 ![Screenshot of the gulp task running the webpack task.](../../Linked_Image_Files/4-Teams/conversation-bots/05-channel-app-04.png)
 
-12. Once that task completes, @mention the bot again.
+Once that task completes, @mention the bot again.
 
 ![Screenshot of the correct bot response.](../../Linked_Image_Files/4-Teams/conversation-bots/05-channel-app-05.png)
 
+## Reply to messages with Adaptive cards
 
-## Task 2: Reply to messages with Adaptive cards
+In this section, you'll update the bot to respond to unknown messages using an Adaptive Card. The card's single action will trigger the bot to update the existing message with a new Adaptive Card. The updated message will include an extra action that will trigger the bot to delete the message.
 
-In this section, you'll update the bot to respond to unknown messages using an Adaptive card. The card's single action will trigger the bot to update the existing message with a new Adaptive card. The updated message will include an extra action that will trigger the bot to delete the message.
+Run the following command to install the Adaptive Cards SDK and supporting packages:
 
-1. Run the following command to install the Adaptive Cards SDK and supporting packages:
-
-```shell
-npm install adaptivecards-templating adaptive-expressions
+```console
+npm install adaptivecards-templating adaptive-expressions -SE
 ```
 
-2. Create a new file named **responseCard.json** in the **./src/server/conversationalBot/cards** folder. Add the following json that defines an adaptive card:
+Create a new file named **responseCard.json** in the **./src/server/conversationalBot/cards** folder. Add the following json that defines an adaptive card:
 
 ```json
 {
@@ -165,25 +153,25 @@ npm install adaptivecards-templating adaptive-expressions
 }
 ```
 
-3. Notice that the card contains binding expressions (`${...}`) used with Adaptive Card templating. The card also contains actions, which contain `verb` and `data` attributes that are sent to the bot when the action is invoked (selected).
+Notice that the card contains binding expressions (`${...}`) used with Adaptive Card templating. The card also contains actions, which contain `verb` and `data` attributes that are sent to the bot when the action is invoked (selected).
 
-4. Create a new file named **responseCard.ts** in the **./src/server/conversationalBot/cards** folder. Add the following statements to load the card json:
+Create a new file named **responseCard.ts** in the **./src/server/conversationalBot/cards** folder. Add the following statements to load the card json:
 
 ```typescript
 const ResponseCard = require("./responseCard.json");
 export default ResponseCard;
 ```
 
-5. Locate and open the dialog in the file **./src/server/conversationalBot/dialogs/mainDialog.ts**.
+Locate and open the dialog in the file **./src/server/conversationalBot/dialogs/mainDialog.ts**.
 
-6. Add the following statements to the top of the file:
+Add the following statements to the top of the file:
 
 ```typescript
 import ResponseCard from "../cards/responseCard";
 import * as ACData from "adaptivecards-templating";
 ```
 
-7. Update the existing `import` from `botbuilder` to include the `CardFactory` class:
+Update the existing `import` from `botbuilder` to include the **CardFactory** class:
 
 ```typescript
 import {
@@ -195,11 +183,11 @@ import {
 } from "botbuilder";
 ```
 
-8. Locate the existing `actStep()` method in the class and find the `switch` statement that checks the activity text. Replace the `default` case statements with a call to a method that will load and send the response card:
+Locate the existing `actStep()` method in the **MainDialog** class and find the `switch` statement that checks the activity text: `switch (stepContext.context.activity.text)`. Replace the `default` case statements with a call to a method that will load and send the response card:
 
 ```typescript
 switch (stepContext.context.activity.text) {
-  // existing case statements
+  // existing code omitted for brevity
   default: {
     await this.sendResponseCard(stepContext.context);
     return await stepContext.next();
@@ -207,12 +195,12 @@ switch (stepContext.context.activity.text) {
 }
 ```
 
-9. Add the following method to send an adaptive card if the bot receives an unknown command:
+Add the following method to the **MainDialog** class to send an adaptive card if the bot receives an unknown command:
 
 ```typescript
 private async sendResponseCard(turnContext: TurnContext): Promise<void> {
   const cardData = {
-    message: "Demonstrates how to respond with a card, update the card & ultimately delete the response.",
+    message: "Demonstrates how to respond with a card, update the card and ultimately delete the response.",
     count: 0
   };
   const template = new ACData.Template(ResponseCard);
@@ -225,29 +213,29 @@ private async sendResponseCard(turnContext: TurnContext): Promise<void> {
 }
 ```
 
-10. When the use selects the button that represents an action, the bot will receive an `onAdaptiveCardInvoke` event. This event is part of the `TeamsActivityHandler` that is the base class for the `ConversationalBot` class. The event can be handled by implementing the handler in our class.
+When the use selects the button that represents an action, the bot will receive an `onAdaptiveCardInvoke` event. This event is part of the `TeamsActivityHandler` that is the base class for the `ConversationalBot` class. The event can be handled by implementing the handler in our class.
 
-11. Open the file **./src/server/conversationalBot/ConversationalBot.ts**.
+Open the file **./src/server/conversationalBot/ConversationalBot.ts**.
 
-12. Add the following `import` statements to the top of the file:
+Add the following `import` statements to the top of the file:
 
 ```typescript
 import ResponseCard from "./cards/responseCard";
 import * as ACData from "adaptivecards-templating";
 ```
 
-13. Update the existing `import` from `botbuilder` to include the following classes:
+Update the existing `import` from `botbuilder` to include the following classes:
 
 ```typescript
 import {
-	AdaptiveCardInvokeValue,
-	AdaptiveCardInvokeResponse,
-	StatusCodes,
-  // existing imports omitted for clarity
+  AdaptiveCardInvokeValue,
+  AdaptiveCardInvokeResponse,
+  StatusCodes,
+  // existing imports omitted for brevity
 } from "botbuilder";
 ```
 
-14. Add the following method to the `ConversationalBot` class:
+Add the following method to the `ConversationalBot` class:
 
 ```typescript
 protected async onAdaptiveCardInvoke(context: TurnContext, invokeValue: AdaptiveCardInvokeValue): Promise<any> {
@@ -301,37 +289,37 @@ protected async onAdaptiveCardInvoke(context: TurnContext, invokeValue: Adaptive
 }
 ```
 
-15. In the code you've added, notice the `update` code block retrieves and increments the `count` property it received. It then creates a new cardData object with an updated message and boolean property that will render an extra action to delete the card. The method returns an `AdaptiveCardInvokeResponse` object containing an updated card to render in place of the original.
+In the code you've added, notice the `update` code block retrieves and increments the `count` property it received. It then creates a new cardData object with an updated message and boolean property that will render an extra action to delete the card. The method returns an `AdaptiveCardInvokeResponse` object containing an updated card to render in place of the original.
 
-16. The `delete` code block deletes the card using the `deleteActivity()` method.
+The `delete` code block deletes the card using the `deleteActivity()` method.
 
 ### Test the bot updating existing messages
 
-17. Save your changes. The `gulp` task will detect the change and run the **webpack:server** task. Wait for that task to complete.
+Save your changes. The **gulp** task will detect the change and run the **webpack:server** task. Wait for that task to complete.
 
 ![Screenshot of the gulp task running the webpack task.](../../Linked_Image_Files/4-Teams/conversation-bots/05-channel-app-04.png)
 
-18. In the Microsoft Teams client, go to the channel you installed the bot in the previous section. From the **Conversations** tab, @mention the bot with a random string to trigger the `else` condition.
+In the Microsoft Teams client, go to the channel you installed the bot in the previous section. From the **Conversations** tab, @mention the bot with a random string to trigger the `else` condition.
 
-19. The bot will reply to the message with a card:
+The bot will reply to the message with a card:
 
 ![Screenshot of a message from the bot using cards.](../../Linked_Image_Files/4-Teams/conversation-bots/05-test-04.png)
 
-20. Select the button **Update card**. After a few seconds, the card should be updated with a new card containing an incremented counter value and a new button:
+Select the button **Update card**. After a few seconds, the card should be updated with a new card containing an incremented counter value and a new button:
 
 ![Screenshot of an updated message from the bot using cards.](../../Linked_Image_Files/4-Teams/conversation-bots/05-test-05.png)
 
-21. Select the **Update card** button a few more times to see the counter get updated.
+Select the **Update card** button a few more times to see the counter get updated.
 
-22. Finally, select the **Delete card** button. After a few seconds, the card will be removed by the bot.
+Finally, select the **Delete card** button. After a few seconds, the card will be removed by the bot.
 
-## Task 3: Reply to message reactions
+## Reply to message reactions
 
 In this section, you'll update the bot to respond when someone likes a message from the bot.
 
-1. Locate and open the bot in the file **./src/server/conversationalBot/ConversationalBot.ts**.
+Locate and open the bot in the file **./src/server/conversationalBot/ConversationalBot.ts**.
 
-2. Add the following `this.onMessageReaction()` handler to the class constructor method:
+Add the following `this.onMessageReaction()` handler to the class constructor method:
 
 ```typescript
 this.onMessageReaction(async (context, next) => {
@@ -350,11 +338,11 @@ this.onMessageReaction(async (context, next) => {
 });
 ```
 
-3. This code will execute when a user adds a reaction to a message from the bot. If the reaction is a *like*, the bot will reply with a *"Thank you!"* message
+This code will execute when a user adds a reaction to a message from the bot. If the reaction is a *like*, the bot will reply with a *"Thank you!"* message
 
 ### Test the bot reacting to message reactions
 
-4. From the command line, navigate to the root folder for the project and execute the following command:
+From the command line, navigate to the root folder for the project and execute the following command:
 
 ```console
 gulp ngrok-serve --debug
@@ -363,7 +351,7 @@ gulp ngrok-serve --debug
 > [!IMPORTANT]
 > Recall from a previous exercise, Ngrok will create a new subdomain. You need to update your bot registration's **Messaging endpoint** in the Azure portal (*shown in a previous exercise*) with this new domain before testing it.
 
-5. In the Microsoft Teams client, go to the channel you installed the bot in the previous section. From the **Conversations** tab, find a message from the bot and apply a *like* reaction to it. After a few seconds, the bot will reply with a message, thanking them for liking the reaction:
+In the Microsoft Teams client, go to the channel you installed the bot in the previous section. From the **Conversations** tab, find a message from the bot and apply a *like* reaction to it. After a few seconds, the bot will reply with a message, thanking them for liking the reaction:
 
 ![Screenshot of a bot replying to a reaction.](../../Linked_Image_Files/4-Teams/conversation-bots/05-test-07.png)
 

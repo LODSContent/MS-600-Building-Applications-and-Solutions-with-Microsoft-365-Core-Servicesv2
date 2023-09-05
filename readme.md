@@ -1,3 +1,5 @@
+**This course will be retiring on  **2023/12/29**.  Once course is retired, all GitHub repos will be removed. Thank you.**
+
 # MS-600: Building Applications and Solutions with Microsoft 365 Core Services
 
 - **[Download Latest Student Handbook and AllFiles Content](../../releases/latest)**
